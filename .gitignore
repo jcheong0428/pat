@@ -1,5 +1,7 @@
-
-notebooks/output/*
+# Ignore data but keep folder structure.
+notebooks/output/*.avi
+notebooks/output/intro
+notebooks/output/json/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
