@@ -22,3 +22,7 @@ Clone the repository, download the Sherlock OpenPose data and extract to `notebo
 - [ ] Example of comparing distance between 2 or multiple people.
 - [ ] Extract Velocity across frame.
 - [ ] Extract Acceleration across frame.
+
+# Reference
+https://github.com/CMU-Perceptual-Computing-Lab/openpose
+https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/doc/output.md
