@@ -33,20 +33,22 @@ class PoseAnalysisToolbox:
 
     '''
     def __init__(self, pandas_obj):
-        self._validate_keypoints(pandas_obj)
         self._obj = pandas_obj
-        self._colnames = ['fname', 'frame', 'key','keyID', 'personID','value']
-        self._type = 'Keypoints'
+        self._type = self._validate_type(pandas_obj)
         self.fps = None
 
     @staticmethod
-    def _validate_keypoints(obj):
+    def _validate_type(obj):
         '''Verify that object is a keypoints dataframe
         '''
-        for col in obj.columns:
-            if col not in obj.columns:
-                raise AttributeError(f"Must have {col} in columns.")
-        pass
+        keypoint_cols = ['fname', 'frame', 'key', 'keyID', 'personID', 'value']
+        pose2d_cols = np.ravel([[f'x_{i}', f'y_{i}', f'c_{i}'] for i in range(25)])
+        type = ''
+        if np.array_equal(obj.columns, keypoint_cols):
+            type = 'Keypoints'
+        elif np.array_equal(obj.columns, pose2d_cols):
+            type = 'Pose2D'
+        return type
 
     def grab_pose(self):
         '''Grabs the pose_keypoints_2d
