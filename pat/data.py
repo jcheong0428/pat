@@ -67,7 +67,10 @@ class PoseAnalysisToolbox:
         Returns:
             person_counts: pandas series
         '''
-        return self._obj.groupby('frame')['personID'].nunique()
+        if self._type=='Keypoints':
+            return self._obj.groupby('frame')['personID'].nunique()
+        else:
+            return self._obj.groupby('frame').count().mean(axis=1)
 
     def grab_person_pose(self, personID=None):
         '''Grabs the pose keypoint data for specified personid.
