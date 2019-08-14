@@ -6,8 +6,14 @@ This toolbox hosts useful functions to extract features and analyze pose data ex
 Ultimately we want this to be a package & class.  
 But first let's write functions in separate notebooks in the `notebooks` folders that would be included in the package.
 
-# Instructions
-Clone the repository, download the Sherlock OpenPose data and extract to `notebooks/output/json`.
+# Installation.
+1. Clone the repository.
+2. Install in development mode
+```
+pip install -e .
+```
+3. Check out the example notebook `notebooks/Examples.ipynb`
+4. For more data, download the Sherlock OpenPose data and extract to `notebooks/output/json`.
 
 # Features
 - [x] Load data
