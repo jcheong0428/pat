@@ -11,6 +11,16 @@ from scipy.spatial.distance import cdist, squareform
 import matplotlib.pyplot as plt
 from pat.utils import calc_time
 
+pose_2d_keys =  {0:  "Nose", 1:  "Neck", 2: "RShoulder",
+3: "RElbow", 4: "RWrist", 5: "LShoulder", 6: "LElbow",
+7: "LWrist", 8: "MidHip", 9: "RHip",
+10: "RKnee", 11: "RAnkle", 12: "LHip", 13: "LKnee", 14: "LAnkle", 15: "REye",
+16: "LEye", 17: "REar", 18: "LEar", 19: "LBigToe", 20: "LSmallToe",
+21: "LHeel", 22: "RBigToe", 23: "RSmallToe", 24: "RHeel", 25: "Background"}
+pose2d_cols = np.ravel([[f'x_{pose_2d_keys[i]}',
+                         f'y_{pose_2d_keys[i]}',
+                         f'c_{pose_2d_keys[i]}'] for i in range(25)])
+
 @pd.api.extensions.register_dataframe_accessor("pat")
 class PoseAnalysisToolbox:
     '''
@@ -42,7 +52,6 @@ class PoseAnalysisToolbox:
         '''Verify that object is a keypoints dataframe
         '''
         keypoint_cols = ['fname', 'frame', 'key', 'keyID', 'personID', 'value']
-        pose2d_cols = np.ravel([[f'x_{i}', f'y_{i}', f'c_{i}'] for i in range(25)])
         type = ''
         if np.array_equal(obj.columns, keypoint_cols):
             type = 'Keypoints'

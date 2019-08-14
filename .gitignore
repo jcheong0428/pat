@@ -1,6 +1,7 @@
 # Ignore data but keep folder structure.
 notebooks/output/*.avi
 notebooks/output/intro
+notebooks/output/2019-08-13_google_images
 notebooks/output/json/*.json
 
 # Byte-compiled / optimized / DLL files
