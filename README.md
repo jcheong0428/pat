@@ -1,10 +1,12 @@
 # Pose Analysis Toolbox (PAT)
 
-# Intro
-This toolbox hosts useful functions to extract features and analyze pose data extracted from OpenPose.  
+# Overview
+A hackathon project initiated at [MIND 2019](http://mindsummerschool.org/) at Dartmouth College.
 
-Ultimately we want this to be a package & class.  
-But first let's write functions in separate notebooks in the `notebooks` folders that would be included in the package.
+High level idea: Create useful functions that preprocess, analyze, and visualize OpenPose data. Can be used to predict and generate taxonomy of social and non-social poses and interactions.  
+
+# Presentation
+Link to presentation goes here.
 
 # Installation.
 1. Clone the repository.
