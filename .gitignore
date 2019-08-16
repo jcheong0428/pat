@@ -4,6 +4,9 @@ notebooks/output/intro
 notebooks/output/2019-08-13_google_images
 notebooks/output/json/*.json
 
+# macOS
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
