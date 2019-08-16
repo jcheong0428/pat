@@ -1,9 +1,16 @@
 # Pose Analysis Toolbox (PAT)
+<div align="center">
+<img src="assets/pat.jpg"
+     alt="Pose Analysis Toolbox"
+     style="align: center; width: 150px;" />
+</div>
+
+-----------------
 
 # Overview
 A hackathon project initiated at [MIND 2019](http://mindsummerschool.org/) at Dartmouth College.
 
-High level idea: Create useful functions that preprocess, analyze, and visualize OpenPose data. Can be used to predict and generate taxonomy of social and non-social poses and interactions.  
+High level idea: Create useful functions that preprocess, analyze, and visualize [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) data. Can be used to predict and generate taxonomy of social and non-social poses and interactions.  
 
 # Presentation
 Link to presentation goes here.
