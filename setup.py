@@ -16,7 +16,7 @@ extra_setuptools_args = dict(
 )
 
 setup(
-    name='pat',
+    name='py-pat',
     version=version['__version__'],
     author='Mind2019-SocialPose',
     author_email='jcheong.gr@dartmouth.edu',
@@ -30,7 +30,7 @@ setup(
     package_data={'pat': ['resources/*']},
     license='LICENSE.txt',
     description='A Python package to analyze OpenPose data',
-    long_description='facesync is a python package that allows users to synchronize multiple videos based on audio.',
+    long_description='Python Pose Analysis Toolbox (PPAT) provides tools and functions for loading, preprocessing, analyzing, and visualizing OpenPose data.',
     keywords = ['openpose', 'socialpose', 'pose'],
     classifiers = [
         "Programming Language :: Python :: 3.6",

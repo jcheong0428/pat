@@ -342,3 +342,26 @@ class PoseAnalysisToolbox:
         widgets.jslink((play, 'value'), (slider, 'value'))
         widgets.HBox([play, slider])
         interact(update, w = slider, _w = play);
+
+    def extract_person_distance(self):
+        """Extracts limb distances between 2 individuals.
+        Frames with fewer than two people are skipped and the first two people are assessed with frames with more than two people.
+
+        """
+        limb_dists = []
+        unique_frames =  self._obj.index.get_level_values('frame').unique()
+        new_frames = []
+        coordlen = _grab_coordinates(self._obj.loc[unique_frames[0]].iloc[0,:].to_frame().T).shape[0]
+        matlength = int(coordlen**2)
+        for frame in tqdm(unique_frames):
+            try:
+                p0 = self._obj.loc[frame,:].iloc[0,:].to_frame().T
+                p1 = self._obj.loc[frame,:].iloc[1,:].to_frame().T
+                pairwise_limb_dist = cdist(_grab_coordinates(p0),_grab_coordinates(p1)).flatten()
+                limb_dists.append(pairwise_limb_dist)
+                new_frames.append(frame)
+            except:
+                pass
+        return_df = pd.DataFrame(np.array(limb_dists), index = new_frames)
+        return_df.index.name = 'frame'
+        return return_df
