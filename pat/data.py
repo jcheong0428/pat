@@ -14,6 +14,8 @@ from pat.utils import calc_time, get_resource_path
 from scipy.spatial import procrustes
 from tqdm import tqdm
 import h5py
+import ipywidgets as widgets
+from ipywidgets import interact, interactive, fixed, interact_manual, Layout
 
 pose_2d_keys =  {0:  "Nose", 1:  "Neck", 2: "RShoulder",
 3: "RElbow", 4: "RWrist", 5: "LShoulder", 6: "LElbow",
@@ -25,6 +27,17 @@ pose2d_cols = np.ravel([[f'x_{pose_2d_keys[i]}',
                          f'y_{pose_2d_keys[i]}',
                          f'c_{pose_2d_keys[i]}'] for i in range(25)])
 standardfigure = pd.read_csv(os.path.join(get_resource_path(),'standardfig.csv'),index_col=['frame'])
+
+def _grab_coordinates(df):
+    '''Grabs the x, y coordinates and spits out n x (x,y) matrix
+
+    Args:
+        df: Pose2D dataframe
+    Returns:
+        df: Pose2D dataframe with x, y coordinates.
+    '''
+    newdf = df[[col for col in df.columns if 'x_' in col or 'y_' in col]]
+    return newdf.values.reshape(int(newdf.shape[1]/2),2)
 
 @pd.api.extensions.register_dataframe_accessor("pat")
 class PoseAnalysisToolbox:
@@ -219,16 +232,6 @@ class PoseAnalysisToolbox:
         Returns:
             df: Pose2D dataframe with aligned coordinates.
         '''
-        def _grab_coordinates(df):
-            '''Grabs the x, y coordinates and spits out n x (x,y) matrix
-
-            Args:
-                df: Pose2D dataframe
-            Returns:
-                df: Pose2D dataframe with x, y coordinates.
-            '''
-            newdf = df[[col for col in df.columns if 'x_' in col or 'y_' in col]]
-            return newdf.values.reshape(int(newdf.shape[1]/2),2)
 
         aligned_df = self._obj.copy()
         if standardfigure is None:
@@ -280,3 +283,62 @@ class PoseAnalysisToolbox:
                     imputed_value = np.mean(ys[notnull]*norm_wm)
                     imputed_df.loc[rowix, ycols[iy]] = imputed_value
         return imputed_df
+
+    def plot_interactive(self, fps=None):
+        """Interactive plotting in widget.
+        Scroll through frames to examine data.
+        Args:
+            fps: frame rate per second to plot movie time in (mm:ss), If None (default) only plots frame value.
+
+        """
+        # TODO: Potentiall be simplified by just calling pat.plot()
+        def _plot_title(fps, frame, cs):
+            if fps:
+                self._obj.fps = fps
+                time = int(frame)/fps/60.
+                time_min = int(np.floor(time))
+                time_sec = int(np.round(60*float(str(time-int(time))[1:])))
+                plt.title(f"Frame: {frame}, Time: {time_min}:{time_sec}, Conf:{np.mean(cs):.2f}")
+            else:
+                plt.title(f"Frame: {frame}, Conf:{np.mean(cs):.2f}")
+
+        frames = self._obj.index.get_level_values('frame').unique()
+        fig = plt.figure(figsize=(5,5))
+        ax = fig.add_subplot(1, 1, 1)
+        frame = frames[0]
+        pose = self._obj.query(f"frame==@frame")
+        # 75 data points in (x1,y1,c1, x2,y2,c2,...) where x is x coord, y is y coord, and c is confidence
+        xcols = [col for col in pose.columns if 'x_' in col]
+        ycols = [col for col in pose.columns if 'y_' in col]
+        ccols = [col for col in pose.columns if 'c_' in col]
+        xs = pose.loc[:,xcols].values
+        ys = pose.loc[:,ycols].values
+        cs = pose.loc[:,ccols].values
+
+        ax.scatter(xs,ys)
+        plt.axis('scaled')
+        ax.set(xlim=[0,640],ylim=[0,480])
+        plt.gca().invert_yaxis()
+        _plot_title(fps, frame, cs)
+
+
+        def update(w = 0, _w=0):
+            frame = frames[w]
+            pose = self._obj.query(f"frame==@frame")
+            xs = pose.loc[:,xcols].values
+            ys = pose.loc[:,ycols].values
+            cs = pose.loc[:,ccols].values
+            ax.clear()
+            ax.scatter(xs,ys)
+            plt.axis('scaled')
+            ax.set(xlim=[0,640],ylim=[0,480])
+            plt.gca().invert_yaxis()
+            _plot_title(fps, frame, cs)
+
+        play = widgets.Play(
+        #     interval=10,
+            value=0, min=0, max=len(frames), step=1, description="Press play",    disabled=False)
+        slider = widgets.IntSlider(value=0, min=0, max=len(frames), step=1, layout=Layout(width='50%', height='80px'))
+        widgets.jslink((play, 'value'), (slider, 'value'))
+        widgets.HBox([play, slider])
+        interact(update, w = slider, _w = play);
