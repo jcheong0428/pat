@@ -124,12 +124,15 @@ class PoseAnalysisToolbox:
         Returns:
             Dataframe with frame x keypoint distance matrix ()
         '''
-        # if not override:
-        #     assert(self._type=='Pose2D'), "Make sure dataframe is a Pose2D dataframe with 75 columns."
+        xcols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'x_' in col]
+        ycols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'y_' in col]
+        if len(xcols)==0:
+            raise KeyError("No confidence columns beginning with x_")
+        if len(ycols)==0:
+            raise KeyError("No confidence columns beginning with c_")
+
         pose_dms = []
         for frame_ix in range(len(self._obj)):
-            xcols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'x_' in col]
-            ycols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'y_' in col]
             p_x = self._obj.iloc[frame_ix,xcols]
             p_y = self._obj.iloc[frame_ix,ycols]
             coords = np.array([p_x, p_y]).T
@@ -145,13 +148,16 @@ class PoseAnalysisToolbox:
         Return:
             filtered Dataframe
         '''
-        assert(self._type=='Pose2D'), "Make sure dataframe is a Pose2D dataframe with 75 columns."
+        # assert(self._type=='Pose2D'), "Make sure dataframe is a Pose2D dataframe with 75 columns."
+        ccols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'c_' in col]
+        if len(ccols)==0:
+            raise KeyError("No confidence columns beginning with c_")
         '''
         TODO: Extend to filtering per value.
         '''
         filter_bool = []
         for frame_ix in range(len(self._obj)):
-            p_c = self._obj.iloc[frame_ix,2::3]
+            p_c = self._obj.iloc[frame_ix,ccols]
             filter_bool.append(filter_func(p_c) > min_conf)
         return self._obj.loc[filter_bool]
 
@@ -166,7 +172,7 @@ class PoseAnalysisToolbox:
         Return:
             ax: matplotlib ax handle
         """
-        assert(self._type=='Pose2D'), "Make sure dataframe is a Pose2D dataframe with 75 columns."
+        # assert(self._type=='Pose2D'), "Make sure dataframe is a Pose2D dataframe with 75 columns."
         # assert(isinstance(frame_no, (int, float))), "Make sure your frame_no is a number"
         if len(self._obj)!=1:
             try:
@@ -175,8 +181,16 @@ class PoseAnalysisToolbox:
                 raise("Please specifify which frame to plot")
         else:
             frame_df = self._obj
-        xs = frame_df.iloc[:,::3]
-        ys = frame_df.iloc[:,1::3]
+
+        xcols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'x_' in col]
+        ycols = [np.where(col==self._obj.columns)[0][0] for col in self._obj.columns if 'y_' in col]
+        if len(xcols)==0:
+            raise KeyError("No confidence columns beginning with x_")
+        if len(ycols)==0:
+            raise KeyError("No confidence columns beginning with c_")
+
+        xs = frame_df.iloc[:,xcols]
+        ys = frame_df.iloc[:,ycols]
         if ax is None:
             f,ax = plt.subplots()
         ax.scatter(xs, ys, **kwargs)
